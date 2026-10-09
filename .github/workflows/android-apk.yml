@@ -1,1 +1,46 @@
+name: Android APK Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract uploaded source ZIP
+        run: |
+          mkdir source
+          unzip -q kivanc_kuyumculuk_apk_hazirlik.zip -d source
+          cp -a source/. .
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Android platform
+        run: flutter create --platforms=android .
+
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: kivanc-kuyumculuk-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
 
