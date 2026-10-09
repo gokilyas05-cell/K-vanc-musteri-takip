@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171717">
+<title>Kıvanç Kuyumculuk | Müşteri Takip</title>
+<style>
+:root{--bg:#f5f3ef;--ink:#202020;--gold:#c7a45a;--card:#fff;--muted:#777;--line:#e6e0d5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#171717;color:white;padding:22px 18px 18px;border-bottom:3px solid var(--gold)}
+.brand{color:#e4c77e;font-size:12px;letter-spacing:2px;text-transform:uppercase}.headrow{display:flex;justify-content:space-between;align-items:center;gap:12px}h1{font-size:22px;margin:6px 0 0}header p{margin:7px 0 0;color:#d0d0d0;font-size:13px}
+main{max-width:900px;margin:auto;padding:16px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px}.stat strong{font-size:22px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.tab,button{border:0;border-radius:10px;padding:11px 13px;font-weight:650;cursor:pointer}.tab{background:#e9e4da;color:#333;white-space:nowrap}.tab.active,.primary{background:#202020;color:#f4d88e}.secondary{background:#eee9df;color:#252525}.danger{background:#fae6e3;color:#8a2e25}.panel{margin-bottom:13px}.panel h2{font-size:17px;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;color:#5e5a52;font-weight:650}input,textarea,select{width:100%;padding:11px;border:1px solid #dcd5c8;border-radius:9px;background:#fff;font:inherit;color:#222}input[type=file]{padding:8px;font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}.hint{color:var(--muted);font-size:12px;line-height:1.5}.hidden{display:none!important}.searchrow{display:flex;gap:8px;margin-bottom:12px}.searchrow input{flex:1}.customer{border:1px solid var(--line);padding:13px;border-radius:12px;margin:8px 0;background:#fff}.customer-top{display:flex;justify-content:space-between;gap:8px}.customer h3{margin:0 0 4px;font-size:16px}.small{font-size:12px;color:var(--muted)}.tag{display:inline-block;background:#f4ecd8;color:#73571d;border-radius:20px;padding:4px 8px;font-size:11px;margin:5px 4px 0 0}.event{border-left:3px solid var(--gold);padding:9px 12px;margin:8px 0;background:#fff8e8;border-radius:0 9px 9px 0}.event strong{display:block}.empty{padding:18px;text-align:center;color:var(--muted);font-size:13px}.foot{text-align:center;color:#888;font-size:11px;padding:8px 10px 28px}
+@media(max-width:520px){main{padding:12px}.stats{gap:7px}.stat{padding:10px}.stat strong{font-size:19px}.stat span{font-size:11px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.headrow{align-items:flex-start}h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div class="headrow"><div><div class="brand">Kıvanç Kuyumculuk</div><h1>Müşteri Takip</h1><p>Müşterileriniz ve özel günleri, tek yerde.</p></div><div style="font-size:30px">✦</div></div></header>
+<main>
+<div class="stats"><div class="stat"><strong id="count">0</strong><span>Kayıtlı müşteri</span></div><div class="stat"><strong id="upcoming">0</strong><span>Yaklaşan özel gün</span></div><div class="stat"><strong>7 gün</strong><span>Hatırlatma süresi</span></div></div>
+<div class="tabs"><button class="tab active" data-tab="customers">Müşteriler</button><button class="tab" data-tab="add">+ Müşteri ekle</button><button class="tab" data-tab="events">Özel günler</button><button class="tab" data-tab="backup">Excel / Yedek</button></div>
+<section id="customers" class="view">
+<div class="panel"><h2>Müşteri kayıtları</h2><div class="searchrow"><input id="search" placeholder="İsim veya telefon ara…"><button class="secondary" id="exportQuick">Excel</button></div><div id="customerList"></div></div>
+</section>
+<section id="add" class="view hidden">
+<div class="panel"><h2 id="formTitle">Yeni müşteri</h2><p class="hint">Form fotoğrafını ekleyebilir, bilgileri aşağıya girebilir ve kaydetmeden önce kontrol edebilirsin. Bu prototipte fotoğraftan otomatik metin okuma henüz bağlı değildir.</p>
+<form id="customerForm"><input type="hidden" id="editId">
+<div class="grid">
+<div class="field"><label for="name">Ad soyad *</label><input id="name" required autocomplete="name"></div>
+<div class="field"><label for="phone">Cep telefonu</label><input id="phone" type="tel" autocomplete="tel"></div>
+<div class="field"><label for="email">E-posta</label><input id="email" type="email" autocomplete="email"></div>
+<div class="field"><label for="status">Durum</label><input id="status" placeholder="Örn. Açık / Kapalı"></div>
+<div class="field"><label for="formDate">Form tarihi</label><input id="formDate" type="date"></div>
+<div class="field"><label for="birth">Doğum tarihi</label><input id="birth" type="date"></div>
+<div class="field"><label for="anniversary">Evlilik tarihi</label><input id="anniversary" type="date"></div>
+<div class="field"><label for="spouseBirth">Eşinin doğum tarihi</label><input id="spouseBirth" type="date"></div>
+<div class="field"><label for="profession">Meslek</label><input id="profession"></div>
+<div class="field full"><label for="address">Adres</label><input id="address" autocomplete="street-address"></div>
+<div class="field"><label for="orderNo">Sipariş numarası</label><input id="orderNo"></div>
+<div class="field"><label for="model1">Model</label><input id="model1"></div>
+<div class="field"><label for="size1">Ölçü</label><input id="size1"></div>
+<div class="field"><label for="insideText1">İç yazı</label><input id="insideText1"></div>
+<div class="field"><label for="estimated1">Tahmini fiyat</label><input id="estimated1" inputmode="decimal"></div>
+<div class="field"><label for="model2">İkinci model</label><input id="model2"></div>
+<div class="field"><label for="size2">İkinci ölçü</label><input id="size2"></div>
+<div class="field"><label for="insideText2">İkinci iç yazı</label><input id="insideText2"></div>
+<div class="field"><label for="estimated2">İkinci tahmini fiyat</label><input id="estimated2" inputmode="decimal"></div>
+<div class="field"><label for="cash">Nakit</label><input id="cash" inputmode="decimal"></div>
+<div class="field"><label for="card">Kart</label><input id="card" inputmode="decimal"></div>
+<div class="field"><label for="transfer">Havale</label><input id="transfer" inputmode="decimal"></div>
+<div class="field"><label for="deposit">Kapora</label><input id="deposit" inputmode="decimal"></div>
+<div class="field"><label for="salesRep">Satış temsilcisi</label><input id="salesRep"></div>
+<div class="field"><label for="total">Toplam</label><input id="total" inputmode="decimal"></div>
+<div class="field full"><label for="notes">Notlar</label><textarea id="notes" rows="2" placeholder="Müşteri ve sipariş notları"></textarea></div>
+<div class="field full"><label for="otherDate">Diğer özel gün (isteğe bağlı)</label><input id="otherDate" type="date"></div>
+<div class="field full"><label for="otherLabel">Diğer özel günün adı</label><input id="otherLabel" placeholder="Örn. tanışma yıldönümü"></div>
+<div class="field full"><label for="photo">Bilgi formunun fotoğrafı</label><input id="photo" type="file" accept="image/*" capture="environment"><div id="photoStatus" class="hint">Fotoğraf seçebilirsin; bu sürüm görüntüden otomatik alan çıkarmaz ve fotoğrafı kaydetmez.</div></div>
+</div><div class="actions"><button class="primary" type="submit">Müşteriyi kaydet</button><button class="secondary" type="button" id="resetForm">Temizle</button></div></form></div>
+</section>
+<section id="events" class="view hidden"><div class="panel"><h2>Önümüzdeki 7 gün</h2><p class="hint">Tarihi yaklaşan özel günler burada listelenir. Tarayıcı bildirimleri cihaz ve tarayıcı izinlerine bağlıdır.</p><div id="eventList"></div><div class="actions"><button class="secondary" id="enableNotifications">Bildirim iznini aç</button></div><p id="notifyStatus" class="hint"></p></div><div class="panel"><h2>Sonraki 30 gün</h2><div id="monthEvents"></div></div></section>
+<section id="backup" class="view hidden"><div class="panel"><h2>Excel'e aktar</h2><p class="hint">Müşteri listesini Excel'de açılabilen CSV dosyası olarak indir. Tarihler ve notlar da dışa aktarılır.</p><div class="actions"><button class="primary" id="exportAll">Tüm müşterileri dışa aktar</button><button class="secondary" id="exportEvents">Özel günleri dışa aktar</button></div></div><div class="panel"><h2>Yedekleme ve gizlilik</h2><p class="hint">Kayıtlar bu tarayıcının cihaz içi depolamasında tutulur. Tarayıcı verileri silinirse kayıtlar kaybolabilir. Düzenli yedek almanı öneririz. Bu prototipte veriler bir sunucuya gönderilmez; ancak uygulama henüz şifreli yedekleme veya cihazlar arası senkronizasyon sağlamaz.</p><div class="actions"><button class="secondary" id="backupJson">Yedek dosyası indir</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">Yedeği geri yükle <input id="restoreFile" type="file" accept=".json,application/json" style="display:none"></label></div><p class="hint" id="backupStatus"></p></div></section>
+</main><div class="foot">Kıvanç Kuyumculuk • İlk sürüm prototipi</div>
+<script>
+const KEY='kivanc_customer_records_v1';
+let records=[];try{records=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){records=[]}
+const $=id=>document.getElementById(id);
+const fields=['name','phone','email','status','formDate','birth','anniversary','spouseBirth','profession','address','orderNo','model1','size1','insideText1','estimated1','model2','size2','insideText2','estimated2','cash','card','transfer','deposit','salesRep','total','otherDate','otherLabel','notes'];
+function save(){localStorage.setItem(KEY,JSON.stringify(records));render()}
+function dateForYear(value,year){if(!value)return null;const d=new Date(value+'T12:00:00');if(Number.isNaN(+d))return null;d.setFullYear(year);return d}
+function daysUntil(value){const now=new Date();now.setHours(0,0,0,0);let d=dateForYear(value,now.getFullYear());if(!d)return null;d.setHours(0,0,0,0);if(d<now)d=dateForYear(value,now.getFullYear()+1);return Math.round((d-now)/86400000)}
+function events(){let out=[];records.forEach(r=>{[['Doğum günü',r.birth],['Evlilik yıldönümü',r.anniversary],['Eşinin doğum günü',r.spouseBirth],[r.otherLabel||'Diğer özel gün',r.otherDate]].forEach(([type,date])=>{let days=daysUntil(date);if(days!==null)out.push({id:r.id,name:r.name,phone:r.phone,type,date,days})})});return out.sort((a,b)=>a.days-b.days)}
+function fmtDate(v){if(!v)return 'Belirtilmedi';let p=v.split('-');return p.length===3?`${p[2]}.${p[1]}.${p[0]}`:v}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ $('count').textContent=records.length;
+ const ev=events();$('upcoming').textContent=ev.filter(e=>e.days<=7).length;
+ const q=($('search').value||'').toLocaleLowerCase('tr');
+ const filtered=records.filter(r=>(r.name+' '+r.phone).toLocaleLowerCase('tr').includes(q));
+ $('customerList').innerHTML=filtered.length?filtered.map(r=>`<div class="customer"><div class="customer-top"><div><h3>${esc(r.name)}</h3><div class="small">${esc(r.phone||'Telefon yok')}</div></div><button class="secondary" onclick="editRecord('${r.id}')">Düzenle</button></div><div>${[['Doğum günü',r.birth],['Evlilik yıldönümü',r.anniversary],['Eşinin doğum günü',r.spouseBirth],[r.otherLabel||'Diğer özel gün',r.otherDate]].filter(x=>x[1]).map(x=>`<span class="tag">${esc(x[0])}: ${fmtDate(x[1])}</span>`).join('')}</div>${r.notes?`<p class="small">${esc(r.notes)}</p>`:''}<div class="actions"><button class="danger" onclick="deleteRecord('${r.id}')">Sil</button></div></div>`).join(''):'<div class="empty">Henüz müşteri yok. “Müşteri ekle” ile ilk kaydı oluştur.</div>';
+ const upcoming=ev.filter(e=>e.days<=7);
+ $('eventList').innerHTML=upcoming.length?upcoming.map(eventHtml).join(''):'<div class="empty">Önümüzdeki 7 gün için kayıtlı özel gün yok.</div>';
+ const month=ev.filter(e=>e.days<=30);
+ $('monthEvents').innerHTML=month.length?month.map(eventHtml).join(''):'<div class="empty">Önümüzdeki 30 gün için özel gün yok.</div>';
+}
+function eventHtml(e){return `<div class="event"><strong>${esc(e.name)} • ${esc(e.type)}</strong><span>${e.days===0?'Bugün':e.days===1?'Yarın':`${e.days} gün sonra`} · ${fmtDate(e.date)}${e.phone?' · '+esc(e.phone):''}</span></div>`}
+function reset(){ $('customerForm').reset();$('editId').value='';$('formTitle').textContent='Yeni müşteri';$('photoStatus').textContent='Fotoğraf seçebilirsin; bu sürüm görüntüden otomatik alan çıkarmaz ve fotoğrafı kaydetmez.'}
+function editRecord(id){let r=records.find(x=>x.id===id);if(!r)return;fields.forEach(k=>$(k).value=r[k]||'');$('editId').value=id;$('formTitle').textContent='Müşteriyi düzenle';switchTab('add');window.scrollTo(0,0)}
+function deleteRecord(id){let r=records.find(x=>x.id===id);if(r&&confirm(r.name+' kaydını silmek istiyor musun?')){records=records.filter(x=>x.id!==id);save()}}
+window.editRecord=editRecord;window.deleteRecord=deleteRecord;
+function switchTab(tab){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==tab));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='add'&&!$('editId').value)reset()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+$('search').addEventListener('input',render);$('resetForm').addEventListener('click',reset);
+$('photo').addEventListener('change',()=>{$('photoStatus').textContent=$('photo').files[0]?'Fotoğraf seçildi. Otomatik okuma bu prototipte henüz etkin değil.':'Fotoğraf seçilmedi.'});
+$('customerForm').addEventListener('submit',e=>{e.preventDefault();const id=$('editId').value;let r={id:id||crypto.randomUUID(),updatedAt:new Date().toISOString()};fields.forEach(k=>r[k]=$(k).value.trim());if(id){let i=records.findIndex(x=>x.id===id);if(i>=0)records[i]=r}else records.push(r);save();reset();switchTab('customers');alert('Müşteri kaydedildi.');});
+function csvCell(v){return '"'+String(v||'').replace(/"/g,'""')+'"'}
+function download(name,content,type='text/csv;charset=utf-8;'){let blob=new Blob(['\ufeff',content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function exportCustomers(){let keys=['name','phone','email','status','formDate','birth','anniversary','spouseBirth','profession','address','orderNo','model1','size1','insideText1','estimated1','model2','size2','insideText2','estimated2','cash','card','transfer','deposit','salesRep','total','otherDate','otherLabel','notes'];let cols=['Ad soyad','Cep telefonu','E-posta','Durum','Form tarihi','Doğum tarihi','Evlilik tarihi','Eşinin doğum tarihi','Meslek','Adres','Sipariş no','Model 1','Ölçü 1','İç yazı 1','Tahmini fiyat 1','Model 2','Ölçü 2','İç yazı 2','Tahmini fiyat 2','Nakit','Kart','Havale','Kapora','Satış temsilcisi','Toplam','Diğer özel gün','Özel gün adı','Notlar'];download('kivanc-musteriler.csv',[cols,...records.map(r=>keys.map(k=>r[k]))].map(row=>row.map(csvCell).join(';')).join('\r\n'))}
+function exportEventList(){let ev=events();let cols=['Müşteri','Telefon','Özel gün','Tarih','Kaç gün kaldı'];download('kivanc-ozel-gunler.csv',[cols,...ev.map(e=>[e.name,e.phone,e.type,fmtDate(e.date),e.days])].map(row=>row.map(csvCell).join(';')).join('\r\n'))}
+$('exportAll').onclick=exportCustomers;$('exportQuick').onclick=exportCustomers;$('exportEvents').onclick=exportEventList;
+$('backupJson').onclick=()=>download('kivanc-yedek.json',JSON.stringify(records,null,2),'application/json');
+$('restoreFile').addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(!Array.isArray(data))throw Error();if(confirm('Yedekteki kayıtlar mevcut kayıtlarla birleştirilsin mi? İptal dersen mevcut kayıtların yerine geçer.')){const ids=new Set(records.map(r=>r.id));records.push(...data.filter(r=>!ids.has(r.id)))}else records=data;save();$('backupStatus').textContent='Yedek geri yüklendi.'}catch(err){$('backupStatus').textContent='Dosya okunamadı. Geçerli bir Kıvanç yedeği seç.'}e.target.value=''});
+$('enableNotifications').onclick=async()=>{if(!('Notification'in window)){ $('notifyStatus').textContent='Bu tarayıcı bildirim API’sini desteklemiyor.';return}let p=await Notification.requestPermission();$('notifyStatus').textContent=p==='granted'?'Bildirim izni verildi. Bu prototip açıkken özel gün kontrolü yapılabilir.':'Bildirim izni verilmedi.';if(p==='granted')checkNotifications()};
+function checkNotifications(){if(!('Notification'in window)||Notification.permission!=='granted')return;let today=new Date().toISOString().slice(0,10);let sentKey='kivanc_notified_'+today;let sent=JSON.parse(localStorage.getItem(sentKey)||'[]');events().filter(e=>e.days===7&&!sent.includes(e.id+e.type)).forEach(e=>{new Notification('Kıvanç Kuyumculuk: Yaklaşan özel gün',{body:`${e.name} • ${e.type} • 7 gün sonra`});sent.push(e.id+e.type)});localStorage.setItem(sentKey,JSON.stringify(sent))}
+render();checkNotifications();
+</script></body></html>
