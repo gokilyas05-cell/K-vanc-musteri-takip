@@ -12,8 +12,14 @@ jobs:
 
       - name: Extract uploaded source ZIP
         run: |
+          ZIP_FILE=$(find . -maxdepth 1 -type f -iname '*.zip' | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "ZIP file not found"
+            ls -la
+            exit 1
+          fi
           mkdir source
-          unzip -q kivanc_kuyumculuk_apk_hazirlik.zip -d source
+          unzip -q "$ZIP_FILE" -d source
           cp -a source/. .
 
       - name: Set up Java
